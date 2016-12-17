@@ -1,6 +1,7 @@
 #include "bird.hpp"
 #include "load_texture.hpp"
 #include <stdexcept>
+#include <string>
 
 Bird::Bird(SDL_Renderer *renderer):
   renderer(renderer),

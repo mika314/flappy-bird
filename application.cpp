@@ -1,6 +1,7 @@
 #include "application.hpp"
 #include "game.hpp"
 #include <stdexcept>
+#include <string>
 
 Application::Application()
 {

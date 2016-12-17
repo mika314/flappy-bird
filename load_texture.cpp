@@ -1,5 +1,6 @@
 #include "load_texture.hpp"
 #include <stdexcept>
+#include <string>
 
 SDL_Texture *loadTexture(SDL_Renderer *renderer, const char *fileName)
 {

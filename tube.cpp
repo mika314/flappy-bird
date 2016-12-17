@@ -1,5 +1,6 @@
 #include "tube.hpp"
 #include <stdexcept>
+#include <string>
 
 Tube::Tube(SDL_Renderer *renderer, SDL_Texture *texture, int y, bool isUp):
   renderer(renderer),

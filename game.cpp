@@ -4,6 +4,7 @@
 Game::Game(SDL_Renderer *renderer):
   renderer(renderer),
   tubeTexture(loadTexture(renderer, "tube.bmp")),
+  digitsTexture(loadTexture(renderer, "digits.bmp")),
   bird(renderer)
 {
 }
@@ -11,6 +12,7 @@ Game::Game(SDL_Renderer *renderer):
 Game::~Game()
 {
   SDL_DestroyTexture(tubeTexture);
+  SDL_DestroyTexture(digitsTexture);
 }
 
 
@@ -103,7 +105,31 @@ int Game::exec()
     bird.draw();
     for (auto &tube: tubeList)
       tube.draw();
+    drawTubeCounter();
     SDL_RenderPresent(renderer);
   }
   return 0;
+}
+
+void Game::drawTubeCounter()
+{
+  int num = (counter - 4 * (Application::Width - bird.x)) / 2000 + 1;
+  if (num < 0)
+    num = 0;
+  SDL_Rect srcRect;
+  srcRect.y = 0;
+  srcRect.w = 34;
+  srcRect.h = 64;
+  SDL_Rect destRect;
+  destRect.x = Application::Width - 32 - 50;
+  destRect.y = 50;
+  destRect.w = 34;
+  destRect.h = 64;
+  do
+  {
+    srcRect.x = num % 10 * 34;
+    num /= 10;
+    SDL_RenderCopy(renderer, digitsTexture, &srcRect, &destRect);
+    destRect.x -= 34;
+  } while (num > 0);
 }

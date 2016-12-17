@@ -13,8 +13,10 @@ public:
 private:
   SDL_Renderer *renderer;
   SDL_Texture *tubeTexture;
+  SDL_Texture *digitsTexture;
   Bird bird;
   std::vector<Tube> tubeList;
   bool tick(bool isMouseDown);
   int counter = 0;
+  void drawTubeCounter();
 };
