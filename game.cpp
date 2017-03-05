@@ -1,46 +1,39 @@
 #include "game.hpp"
 #include "load_texture.hpp"
 
-Game::Game(SDL_Renderer *renderer):
+Game::Game(sdl::Renderer &renderer):
   renderer(renderer),
-  tubeTexture(loadTexture(renderer, "tube.bmp")),
-  digitsTexture(loadTexture(renderer, "digits.bmp")),
+  tubeTexture(&renderer, &sdl::Surface("tube.bmp")),
+  digitsTexture(&renderer, &sdl::Surface("digits.bmp")),
   bird(renderer)
 {
 }
-
-Game::~Game()
-{
-  SDL_DestroyTexture(tubeTexture);
-  SDL_DestroyTexture(digitsTexture);
-}
-
 
 bool Game::tick(bool isMouseDown)
 {
   if (counter++ % 2000 == 0)
   {
     auto y = rand() % (Application::Height - 200 - 250 - 100) + 100;
-    tubeList.emplace_back(renderer, tubeTexture, y + 250, false);
-    tubeList.emplace_back(renderer, tubeTexture, y, true);
+    tubeList.emplace_back(std::make_unique<Tube>(renderer, tubeTexture, y + 250, false));
+    tubeList.emplace_back(std::make_unique<Tube>(renderer, tubeTexture, y, true));
   }
   bird.tick(isMouseDown);
   SDL_Rect birdRect;
-  birdRect.x = bird.x - 114 / 2;
-  birdRect.y = bird.y - 94 / 2;
-  birdRect.w = 114;
-  birdRect.h = 94;
+  birdRect.x = bird.x - 90 / 2;
+  birdRect.y = bird.y - 80 / 2;
+  birdRect.w = 90;
+  birdRect.h = 80;
   SDL_Rect res;
   for (auto &tube: tubeList)
   {
-    tube.tick();
+    tube->tick();
     SDL_Rect tubeRect;
-    tubeRect.x = tube.x - 128 + 20;
+    tubeRect.x = tube->x - 128 + 20;
     tubeRect.w = 256 - 40;
     tubeRect.h = 10000;
-    if (tube.isUp)
+    if (tube->isUp)
     {
-      tubeRect.y = tube.y - 10000;
+      tubeRect.y = tube->y - 10000;
       if (SDL_IntersectRect(&birdRect, &tubeRect, &res))
       {
         return false;
@@ -48,7 +41,7 @@ bool Game::tick(bool isMouseDown)
     }
     else
     {
-      tubeRect.y = tube.y;
+      tubeRect.y = tube->y;
       if (SDL_IntersectRect(&birdRect, &tubeRect, &res))
       {
         return false;
@@ -57,7 +50,7 @@ bool Game::tick(bool isMouseDown)
   }
   for (auto iter = std::begin(tubeList); iter != std::end(tubeList); )
   {
-    if (iter->x < -128)
+    if ((*iter)->x < -128)
       iter = tubeList.erase(iter);
     else
       ++iter;
@@ -100,13 +93,13 @@ int Game::exec()
     }
     oldTick = currentTick;
     
-    SDL_SetRenderDrawColor(renderer, 0x00, 0xff, 0xff, 0xff);
-    SDL_RenderClear(renderer);
+    renderer.setDrawColor(0x00, 0xff, 0xff, 0xff);
+    renderer.clear();
     bird.draw();
     for (auto &tube: tubeList)
-      tube.draw();
+      tube->draw();
     drawTubeCounter();
-    SDL_RenderPresent(renderer);
+    renderer.present();
   }
   return 0;
 }
@@ -129,7 +122,7 @@ void Game::drawTubeCounter()
   {
     srcRect.x = num % 10 * 34;
     num /= 10;
-    SDL_RenderCopy(renderer, digitsTexture, &srcRect, &destRect);
+    renderer.copy(&digitsTexture, &srcRect, &destRect);
     destRect.x -= 34;
   } while (num > 0);
 }

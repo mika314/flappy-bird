@@ -29,3 +29,7 @@
 *.app
 /*~
 /flappy-bird
+
+*~
+/coddle.cfg/coddle
+.coddle

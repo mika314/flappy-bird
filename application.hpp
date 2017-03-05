@@ -1,5 +1,5 @@
 #pragma once
-#include <SDL.h>
+#include "sdlpp.hpp"
 
 class Application
 {
@@ -9,6 +9,7 @@ public:
   Application();
   int exec();
 private:
-  SDL_Window *window;
-  SDL_Renderer *renderer;
+  sdl::Init init;
+  sdl::Window window;
+  sdl::Renderer renderer;
 };
